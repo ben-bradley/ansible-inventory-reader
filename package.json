@@ -1,0 +1,21 @@
+{
+  "name": "ansible-inventory-reader",
+  "version": "0.0.1",
+  "description": "A module for reading Ansible inventory files into objects",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-nodemon": "^2.0.3",
+    "gulp-run": "^1.6.8",
+    "mocha": "^2.2.5",
+    "should": "^6.0.3"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha -R spec dist/test"
+  },
+  "author": "Ben Bradley",
+  "license": "MIT"
+}
