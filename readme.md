@@ -49,6 +49,9 @@ group_a
 group_b
 group_c
 group_def
+
+[all_star]
+*
 ```
 
 ## Converted to JSON:
@@ -104,6 +107,37 @@ group_def
     "vars": {}
   },
   "group_all": {
+    "children": [
+      {
+        "host": "host_a",
+        "vars": {}
+      },
+        {
+          "host": "host_b",
+          "vars": {}
+        },
+      {
+        "host": "host_c",
+        "vars": {
+          "foo": "bar"
+        }
+      },
+      {
+        "host": "host_d",
+        "vars": {}
+      },
+      {
+        "host": "host_e",
+        "vars": {}
+      },
+      {
+        "host": "host_f",
+        "vars": {}
+      }
+    ],
+    "vars": {}
+  },
+  "all_star": {
     "children": [
       {
         "host": "host_a",

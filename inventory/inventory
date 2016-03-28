@@ -30,3 +30,6 @@ host_vars
 letter_range
 number_range
 combo_range
+
+[all_star]
+*

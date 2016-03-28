@@ -2,6 +2,23 @@
 
 import { readFileSync } from 'fs';
 
+const dedupeChildren = (children, child) => {
+  let dupe = false;
+
+  children = children.map((_child) => {
+    if (_child.host === child.host) {
+      dupe = true;
+      Object.assign(_child.vars, child.vars);
+    }
+    return _child;
+  });
+
+  if (!dupe)
+    children.push(child);
+
+  return children;
+}
+
 const assignVars = (vars) => {
   return vars.reduce((_vars, v) => {
     let parts = v.split(/\ *\=\ */);
@@ -127,7 +144,9 @@ const Inventory = (filepath, encoding = 'utf8') => {
     while (queue.length) {                                // while there's still work to do
       let child = queue.shift();                          // shift the next item
                                                           //
-      if (inventory[child] && inventory[child].children)  // if this item has children,
+      if (child === '*')                                  //
+        queue = queue.concat(groupNames.filter((name) => name !== group))
+      else if (inventory[child] && inventory[child].children)  // if this item has children,
         queue = queue.concat(inventory[child].children);  // add its children to the queue
       else                                                // otherwise,
         inventory[group].children.push(child);            // this item has no children
@@ -136,7 +155,9 @@ const Inventory = (filepath, encoding = 'utf8') => {
 
   // now that all hosts have been populated, assign the vars
   for (let group in inventory)
-    inventory[group].children = inventory[group].children.map(assignHostVars);
+    inventory[group].children = inventory[group].children
+      .map(assignHostVars)
+      .reduce(dedupeChildren, []);
 
   return inventory;
 };

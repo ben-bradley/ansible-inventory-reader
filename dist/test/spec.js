@@ -30,7 +30,7 @@ describe('Ansible Inventory Reader', function () {
   it('should pass', function () {
     var inventory = new _2['default'](filepath);
 
-    inventory.should.be.an.Object['with'].properties(['a', 'b', 'c', 'letter_range', 'number_range', 'combo_range', 'host_vars', 'all_example']);
+    inventory.should.be.an.Object['with'].properties(['a', 'b', 'c', 'letter_range', 'number_range', 'combo_range', 'host_vars', 'all_example', 'all_star']);
 
     for (var group in inventory) {
       assertGroup(inventory[group]);
@@ -42,6 +42,7 @@ describe('Ansible Inventory Reader', function () {
     var combo_range = inventory.combo_range;
     var host_vars = inventory.host_vars;
     var all_example = inventory.all_example;
+    var all_star = inventory.all_star;
 
     a.children[0].host.should.eql('a.example.com');
 
@@ -69,7 +70,9 @@ describe('Ansible Inventory Reader', function () {
     host_vars.children[0].host.should.eql('d.example.com');
     host_vars.children[0].vars.should.eql({ bar: 'baz' });
 
-    all_example.children.should.have.length(14);
+    all_example.children.should.have.length(13);
     all_example.children[3].vars.should.eql({ bar: 'baz' });
+
+    all_star.should.eql(all_example);
   });
 });

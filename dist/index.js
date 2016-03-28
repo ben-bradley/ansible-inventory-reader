@@ -8,6 +8,22 @@ var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = 
 
 var _fs = require('fs');
 
+var dedupeChildren = function dedupeChildren(children, child) {
+  var dupe = false;
+
+  children = children.map(function (_child) {
+    if (_child.host === child.host) {
+      dupe = true;
+      Object.assign(_child.vars, child.vars);
+    }
+    return _child;
+  });
+
+  if (!dupe) children.push(child);
+
+  return children;
+};
+
 var assignVars = function assignVars(vars) {
   return vars.reduce(function (_vars, v) {
     var parts = v.split(/\ *\=\ */);
@@ -148,7 +164,7 @@ var Inventory = function Inventory(filepath) {
     return _inventory; //
   }, {}); //
 
-  for (var group in inventory) {
+  var _loop = function (group) {
     // expand the nested groups
     var queue = inventory[group].children.slice(); // the work queue
     //
@@ -158,16 +174,23 @@ var Inventory = function Inventory(filepath) {
       // while there's still work to do
       var child = queue.shift(); // shift the next item
       //
-      if (inventory[child] && inventory[child].children) // if this item has children,
+      if (child === '*') //
+        queue = queue.concat(groupNames.filter(function (name) {
+          return name !== group;
+        }));else if (inventory[child] && inventory[child].children) // if this item has children,
         queue = queue.concat(inventory[child].children); // add its children to the queue
       else // otherwise,
         inventory[group].children.push(child); // this item has no children
     } //
+  };
+
+  for (var group in inventory) {
+    _loop(group);
   } //
 
   // now that all hosts have been populated, assign the vars
   for (var group in inventory) {
-    inventory[group].children = inventory[group].children.map(assignHostVars);
+    inventory[group].children = inventory[group].children.map(assignHostVars).reduce(dedupeChildren, []);
   }return inventory;
 };
 
