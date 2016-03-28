@@ -71,7 +71,7 @@ const expandRanges = (children) => {
     // identify the type of expansions to preform
     let noRanges = !child.match(/\[.+?\]/),
       letterRanges = child.match(/\[(\w)\:(\w)\]/),
-      numberRanges = child.match(/\[(\d)\:(\d)\]/);
+      numberRanges = child.match(/\[(\d+?)\:(\d+?)\]/);
 
     if (noRanges)
       _children.push(child);
@@ -98,7 +98,7 @@ const Inventory = (filepath, encoding = 'utf8') => {
     throw new Error('Filepath required to be a string.')
 
   const groups = readFileSync(filepath, encoding) // read the file into a groups object
-    .replace(/\n*$/,'')                           // strip trailing new lines
+    .trim()                                       // remove leading/trailing whitespace
     .split(/\n\s*\n/)                             // split into groups on empty lines
     .map((_group) => _group                       //
       .split('\n')                                // split each group into individual lines
@@ -137,18 +137,21 @@ const Inventory = (filepath, encoding = 'utf8') => {
     }, {});                                                         //
 
   for (let group in inventory) {                          // expand the nested groups
-    let queue = inventory[group].children.slice();        // the work queue
+    let queue = inventory[group].children.slice(),        // the work queue
+      asterisked = false;                                 // flag to prevent asterisk loops
                                                           //
     inventory[group].children = [];                       // reset the actual children array
                                                           //
     while (queue.length) {                                // while there's still work to do
-      let child = queue.shift();                          // shift the next item
+      let child = queue.shift().trim();                   // shift the next item
                                                           //
-      if (child === '*')                                  //
+      if (child === '*' && !asterisked) {                 //
         queue = queue.concat(groupNames.filter((name) => name !== group))
+        asterisked = true;
+      }
       else if (inventory[child] && inventory[child].children)  // if this item has children,
         queue = queue.concat(inventory[child].children);  // add its children to the queue
-      else                                                // otherwise,
+      else if (child !== '*')                             // otherwise,
         inventory[group].children.push(child);            // this item has no children
     }                                                     //
   }                                                       //

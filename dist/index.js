@@ -88,7 +88,7 @@ var expandRanges = function expandRanges(_x2) {
       // identify the type of expansions to preform
       var noRanges = !child.match(/\[.+?\]/),
           letterRanges = child.match(/\[(\w)\:(\w)\]/),
-          numberRanges = child.match(/\[(\d)\:(\d)\]/);
+          numberRanges = child.match(/\[(\d+?)\:(\d+?)\]/);
 
       if (noRanges) _children.push(child);else if (numberRanges) _children = _children.concat(expandNumberRanges(numberRanges));else if (letterRanges) _children = _children.concat(expandLetterRanges(letterRanges));
 
@@ -118,7 +118,7 @@ var Inventory = function Inventory(filepath) {
   if (!filepath || typeof filepath !== 'string') throw new Error('Filepath required to be a string.');
 
   var groups = (0, _fs.readFileSync)(filepath, encoding) // read the file into a groups object
-  .replace(/\n*$/, '') // strip trailing new lines
+  .trim() // remove leading/trailing whitespace
   .split(/\n\s*\n/) // split into groups on empty lines
   .map(function (_group) {
     return _group //
@@ -166,21 +166,26 @@ var Inventory = function Inventory(filepath) {
 
   var _loop = function (group) {
     // expand the nested groups
-    var queue = inventory[group].children.slice(); // the work queue
+    var queue = inventory[group].children.slice(),
+        // the work queue
+    asterisked = false; // flag to prevent asterisk loops
     //
     inventory[group].children = []; // reset the actual children array
     //
     while (queue.length) {
       // while there's still work to do
-      var child = queue.shift(); // shift the next item
+      var child = queue.shift().trim(); // shift the next item
       //
-      if (child === '*') //
+      if (child === '*' && !asterisked) {
+        //
         queue = queue.concat(groupNames.filter(function (name) {
           return name !== group;
-        }));else if (inventory[child] && inventory[child].children) // if this item has children,
+        }));
+        asterisked = true;
+      } else if (inventory[child] && inventory[child].children) // if this item has children,
         queue = queue.concat(inventory[child].children); // add its children to the queue
-      else // otherwise,
-        inventory[group].children.push(child); // this item has no children
+      else if (child !== '*') // otherwise,
+          inventory[group].children.push(child); // this item has no children
     } //
   };
 
