@@ -5,7 +5,6 @@ import should from 'should';
 import Inventory from '../';
 
 const filepath = __dirname + '/../../inventory/inventory';
-// const filepath = __dirname + '/../../inventory/pvs';
 
 const assertGroup = (group) => {
   (group).should.be.an.Object.with.properties([ 'children', 'vars' ]);

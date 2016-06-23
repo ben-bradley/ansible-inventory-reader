@@ -104,9 +104,12 @@ const Inventory = (filepath, encoding = 'utf8') => {
       .split('\n')                                // split each group into individual lines
       .filter((line) => !/^\s*\#/.test(line)))    // remove comments
     .reduce((_groups, items) => {                 //
-      let _name = items                           // shift the first item to _name
-        .shift()                                  //
-        .replace(/[\[\]]/g, '');                  // strip out the brackets
+      let _name = items.shift();                  // shift the first item to _name
+                                                  //
+      if (!_name)                                 // if there is no name, skip this one
+        return _groups;                           //
+                                                  //
+      _name = _name.replace(/[\[\]]/g, '');       // strip out the brackets
                                                   //
       _groups[_name] = items;                     // assign the remaining items
       return _groups;                             //

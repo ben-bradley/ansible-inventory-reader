@@ -11,7 +11,6 @@ var _ = require('../');
 var _2 = _interopRequireDefault(_);
 
 var filepath = __dirname + '/../../inventory/inventory';
-// const filepath = __dirname + '/../../inventory/pvs';
 
 var assertGroup = function assertGroup(group) {
   group.should.be.an.Object['with'].properties(['children', 'vars']);
