@@ -77,12 +77,13 @@ var expandNumberRanges = function expandNumberRanges(range) {
   return result;
 };
 
-var expandRanges = function expandRanges(_x2) {
+var expandRanges = function expandRanges() {
+  var _arguments = arguments;
   var _again = true;
 
   _function: while (_again) {
-    var children = _x2;
     _again = false;
+    var children = _arguments.length <= 0 || _arguments[0] === undefined ? [] : _arguments[0];
 
     var expanded = children.reduce(function (_children, child) {
       // identify the type of expansions to preform
@@ -102,9 +103,9 @@ var expandRanges = function expandRanges(_x2) {
 
     // if there are still ranges, run it through again
     if (!done) {
-      _x2 = expanded;
+      _arguments = [expanded];
       _again = true;
-      expanded = done = undefined;
+      children = expanded = done = undefined;
       continue _function;
     }
 

@@ -66,7 +66,7 @@ const expandNumberRanges = (range) => {
   return result;
 }
 
-const expandRanges = (children) => {
+const expandRanges = (children = []) => {
   let expanded = children.reduce((_children, child) => {
     // identify the type of expansions to preform
     let noRanges = !child.match(/\[.+?\]/),

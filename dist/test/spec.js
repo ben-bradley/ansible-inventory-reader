@@ -11,6 +11,7 @@ var _ = require('../');
 var _2 = _interopRequireDefault(_);
 
 var filepath = __dirname + '/../../inventory/inventory';
+// const filepath = __dirname + '/../../inventory/pvs';
 
 var assertGroup = function assertGroup(group) {
   group.should.be.an.Object['with'].properties(['children', 'vars']);
@@ -30,7 +31,7 @@ describe('Ansible Inventory Reader', function () {
   it('should pass', function () {
     var inventory = new _2['default'](filepath);
 
-    inventory.should.be.an.Object['with'].properties(['a', 'b', 'c', 'letter_range', 'number_range', 'combo_range', 'host_vars', 'all_example', 'all_star']);
+    inventory.should.be.an.Object['with'].properties(['a', 'b', 'c', 'letter_range', 'number_range', 'combo_range', 'host_vars', 'all_example', 'all_star', 'no_children']);
 
     for (var group in inventory) {
       assertGroup(inventory[group]);
@@ -43,6 +44,7 @@ describe('Ansible Inventory Reader', function () {
     var host_vars = inventory.host_vars;
     var all_example = inventory.all_example;
     var all_star = inventory.all_star;
+    var no_children = inventory.no_children;
 
     a.children[0].host.should.eql('a.example.com');
 
@@ -74,5 +76,7 @@ describe('Ansible Inventory Reader', function () {
     all_example.children[3].vars.should.eql({ bar: 'baz' });
 
     all_star.should.eql(all_example);
+
+    no_children.children.should.have.length(0);
   });
 });

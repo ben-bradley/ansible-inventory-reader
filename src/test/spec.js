@@ -5,6 +5,7 @@ import should from 'should';
 import Inventory from '../';
 
 const filepath = __dirname + '/../../inventory/inventory';
+// const filepath = __dirname + '/../../inventory/pvs';
 
 const assertGroup = (group) => {
   (group).should.be.an.Object.with.properties([ 'children', 'vars' ]);
@@ -31,7 +32,8 @@ describe('Ansible Inventory Reader', () => {
       'combo_range',
       'host_vars',
       'all_example',
-      'all_star'
+      'all_star',
+      'no_children'
     ]);
 
     for (let group in inventory)
@@ -44,7 +46,8 @@ describe('Ansible Inventory Reader', () => {
       combo_range,
       host_vars,
       all_example,
-      all_star
+      all_star,
+      no_children
     } = inventory;
 
     (a.children[0].host).should.eql('a.example.com');
@@ -77,6 +80,8 @@ describe('Ansible Inventory Reader', () => {
     (all_example.children[3].vars).should.eql({ bar: 'baz' });
 
     (all_star).should.eql(all_example);
+
+    (no_children.children).should.have.length(0);
   });
 
 });
